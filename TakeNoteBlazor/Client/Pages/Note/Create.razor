@@ -5,11 +5,11 @@
 @inject NavigationManager uriHelper
 <h3>Create a Note</h3>
 
-<FormComponent ButtonText="Create Note" note="@note" OnValidSubmit="@CreateNote"/>
+<!--<FormComponent ButtonText="Create Note" note="@note" OnValidSubmit2="@CreateNote"/>-->
 
 @code {
     Note note = new Note();
-    async Task CreateNote()
+    async Task CreateNote(bool IsNew)
     {
         await http.PostAsJsonAsync("api/note", note);
         uriHelper.NavigateTo("notes");

@@ -1,5 +1,5 @@
 ﻿@using TakeNoteBlazor.Shared
-<EditForm Model="@note" OnValidSubmit="@OnValidSubmit">
+<EditForm Model="@note" OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(IsNew))">
     <DataAnnotationsValidator />
     <div class="form-group ">
         <div>
@@ -36,9 +36,14 @@
 @code {
     [Parameter] public Note note { get; set; }
     [Parameter] public string ButtonText { get; set; }
-    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    public bool IsNew { get; set; }
+    [Parameter] public EventCallback<bool> FormSubmit { get; set; }
     //[CascadingParameter]
     //public Object _Parent { get; set; }
-
+    protected override Task OnParametersSetAsync()
+    {
+        IsNew = note.Id.Equals(0) ? true : false;
+        return base.OnParametersSetAsync();
+    }
 
 }

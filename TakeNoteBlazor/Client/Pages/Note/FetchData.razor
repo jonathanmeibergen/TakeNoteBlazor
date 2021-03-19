@@ -19,7 +19,7 @@ else if (notes.Length is 0)
 }
 else
 {
-<FormComponent ButtonText="Create Note" note="@note" OnValidSubmit="@CreateNote" />
+<FormComponent ButtonText="@ButtonText" note="@note" FormSubmit="SaveNote" />
 <table class="table table-striped">
     <thead>
         <tr>
@@ -47,24 +47,36 @@ else
 }
 
 @code {
-    Note[] notes { get; set; }
+        Note[] notes { get; set; }
+        Note note = new Note();
+        string ButtonText { get; set; }
+        EventCallback OnValidSubmitDelegate { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        ButtonText = "Add Note";
+        note = new Note();
         notes = await http.GetFromJsonAsync<Note[]>("api/note");
     }
 
-
-
-    Note note = new Note();
     async Task GetNote(int Id)
     {
+        ButtonText = "Save Note";
+        OnValidSubmitDelegate = new EventCallback();
         note = await http.GetFromJsonAsync<Note>($"api/note/{Id}");
     }
 
-    async Task CreateNote()
+    async Task SaveNote(bool IsNew)
     {
-        await http.PostAsJsonAsync("api/note", note);
-        uriHelper.NavigateTo("notes");
+        if (IsNew)
+        {
+            var response = await http.PostAsJsonAsync("api/note", note);
+        }
+        else
+        {
+            var response = await http.PutAsJsonAsync("api/note", note);
+        }
+        //uriHelper.NavigateTo("notes");
         await OnInitializedAsync();
     }
 
