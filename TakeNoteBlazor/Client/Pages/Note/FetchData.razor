@@ -1,0 +1,80 @@
+﻿@page "/notes"
+@using TakeNoteBlazor.Shared
+@inject HttpClient http
+@inject IJSRuntime js
+@inject NavigationManager uriHelper
+<h3>Notes</h3>
+<small>Make your notes here</small>
+@*<div class="form-group">
+<a class="btn btn-success" href="Note/create"><i class="oi oi-plus"></i> Create New Note</a>
+</div>*@
+
+@if (notes is null)
+{
+<p>Loading</p>
+}
+else if (notes.Length is 0)
+{
+<p>No Notes Found</p>
+}
+else
+{
+<FormComponent ButtonText="Create Note" note="@note" OnValidSubmit="@CreateNote" />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Author</th>
+            <th>Title</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Note note in notes)
+        {
+            <tr>
+                <td>@note.Id</td>
+                <td>@note.Author</td>
+                <td>@note.Title</td>
+                <td>
+                    <a class="btn btn-success" @onclick="@(() => GetNote(note.Id))">Edit</a>
+                    <a class="btn btn-danger" @onclick="@(() => Delete(note.Id))">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+}
+
+@code {
+    Note[] notes { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        notes = await http.GetFromJsonAsync<Note[]>("api/note");
+    }
+
+
+
+    Note note = new Note();
+    async Task GetNote(int Id)
+    {
+        note = await http.GetFromJsonAsync<Note>($"api/note/{Id}");
+    }
+
+    async Task CreateNote()
+    {
+        await http.PostAsJsonAsync("api/note", note);
+        uriHelper.NavigateTo("notes");
+        await OnInitializedAsync();
+    }
+
+    async Task Delete(int Id)
+    {
+        var note = notes.First(n => n.Id == Id);
+        if (await js.InvokeAsync<bool>("confirm", $"Are you sure to Delete {note.Title}"))
+        {
+            await http.DeleteAsync($"api/note/{Id}");
+            await OnInitializedAsync();
+        }
+    }
+}

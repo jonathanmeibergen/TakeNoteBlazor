@@ -1,0 +1,44 @@
+﻿@using TakeNoteBlazor.Shared
+<EditForm Model="@note" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group ">
+        <div>
+            <label>Author :</label>
+            <div>
+                <InputText @bind-Value="@note.Author" />
+                <ValidationMessage For="@(() => note.Author)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group ">
+        <div>
+            <label>Title :</label>
+            <div>
+                <InputText @bind-Value="@note.Title" />
+                <ValidationMessage For="@(() => note.Title)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group ">
+        <div>
+            <label>Content :</label>
+            <div>
+                <InputTextArea @bind-Value="@note.Content" />
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+</EditForm>
+
+
+@code {
+    [Parameter] public Note note { get; set; }
+    [Parameter] public string ButtonText { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    //[CascadingParameter]
+    //public Object _Parent { get; set; }
+
+
+}
