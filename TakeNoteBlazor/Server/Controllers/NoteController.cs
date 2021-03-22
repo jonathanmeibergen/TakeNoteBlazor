@@ -14,22 +14,46 @@ namespace TakeNoteBlazor.Client.Controllers
     public class NoteController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private int pageLength { get; set; }
         public NoteController(ApplicationDbContext context)
         {
             _context = context;
+            pageLength = 8;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             var notes = await _context.Notes.ToListAsync();
             return Ok(notes);
+        }
+
+        [HttpGet("total")]
+        public async Task<IActionResult> GetTotalAmount()
+        {
+            var total = await _context.Notes.CountAsync();
+            return Ok(total);
+        }
+
+        [HttpGet("totalpages")]
+        public async Task<IActionResult> GetTotalPages()
+        {
+            int total = await _context.Notes.CountAsync();
+            int totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(total)/Convert.ToDecimal(pageLength)));
+            return Ok(totalPages);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var notes = await _context.Notes.FirstOrDefaultAsync(n => n.Id.Equals(id));
+            return Ok(notes);
+        }
+
+        [HttpGet("paging/{page}")]
+        public async Task<IActionResult> GetPage(int page)
+        {
+            var notes = await _context.Notes.Skip(pageLength * (page-1)).Take(pageLength).ToListAsync();
             return Ok(notes);
         }
 

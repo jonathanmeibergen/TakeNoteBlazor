@@ -3,27 +3,24 @@
     <DataAnnotationsValidator />
     <div class="form-group ">
         <div>
-            <label>Author :</label>
             <div>
+            <label class="col-form-label-sm">Author :</label>
                 <InputText @bind-Value="@note.Author" />
                 <ValidationMessage For="@(() => note.Author)" />
             </div>
         </div>
-    </div>
-    <div class="form-group ">
         <div>
-            <label>Title :</label>
             <div>
+            <label class="col-form-label-sm">Title :</label>
                 <InputText @bind-Value="@note.Title" />
                 <ValidationMessage For="@(() => note.Title)" />
             </div>
         </div>
-    </div>
-    <div class="form-group ">
         <div>
-            <label>Content :</label>
             <div>
+            <label class="col-form-label-sm">Content :</label>
                 <InputTextArea @bind-Value="@note.Content" />
+                <ValidationMessage For="@(() => note.Content)" />
             </div>
         </div>
     </div>

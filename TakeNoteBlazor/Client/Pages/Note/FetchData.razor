@@ -6,57 +6,90 @@
 <h3>Notes</h3>
 <small>Make your notes here</small>
 @*<div class="form-group">
-<a class="btn btn-success" href="Note/create"><i class="oi oi-plus"></i> Create New Note</a>
-</div>*@
-
+    <a class="btn btn-success" href="Note/create"><i class="oi oi-plus"></i> Create New Note</a>
+    </div>*@
+@if (notes is not null)
+{
+    <FormComponent ButtonText="@ButtonText" note="@note" FormSubmit="SaveNote" />
+    <br />
+}
 @if (notes is null)
 {
-<p>Loading</p>
+    <p>Loading</p>
 }
 else if (notes.Length is 0)
 {
-<p>No Notes Found</p>
+    <p>No Notes Found</p>
+
 }
 else
 {
-<FormComponent ButtonText="@ButtonText" note="@note" FormSubmit="SaveNote" />
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Author</th>
-            <th>Title</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Note note in notes)
-        {
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@note.Id</td>
-                <td>@note.Author</td>
-                <td>@note.Title</td>
-                <td>
-                    <a class="btn btn-success" @onclick="@(() => GetNote(note.Id))">Edit</a>
-                    <a class="btn btn-danger" @onclick="@(() => Delete(note.Id))">Delete</a>
-                </td>
+                <th>Id</th>
+                <th>Author</th>
+                <th>Title</th>
             </tr>
-        }
-    </tbody>
-</table>
-
+        </thead>
+        <tbody>
+            @foreach (Note note in notes)
+            {
+                <tr>
+                    <td>@note.Id</td>
+                    <td>@note.Author</td>
+                    <td>@note.Title</td>
+                    <td>
+                        <a class="btn btn-success" @onclick="@(() => GetNote(note.Id))">Edit</a>
+                        <a class="btn btn-danger" @onclick="@(() => Delete(note.Id))">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" @onclick="(async () => await GetPage(Page--))">Previous</a></li>
+            @{ int pageCounter = 1;}
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item"><a class="page-link" @onclick="(async () => await GetPage(Page = pageCounter))">@i</a></li>
+                pageCounter++;
+            }
+            <li class="page-item"><a class="page-link" @onclick="(async () => await GetPage(Page++))">Next</a></li>
+        </ul>
+    </nav>
 }
 
 @code {
-        Note[] notes { get; set; }
-        Note note = new Note();
-        string ButtonText { get; set; }
-        EventCallback OnValidSubmitDelegate { get; set; }
+    Note[] notes { get; set; }
+    Note note;
+    int _page = 1;
+    int totalPages;
+    public int Page
+    {
+        get { return _page; }
+        set { 
+            if (value <= 1)
+                { _page = 1; } 
+            else if (value > totalPages)
+                { _page = totalPages; }
+        }
+    }
+    string ButtonText { get; set; }
+    EventCallback OnValidSubmitDelegate { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         ButtonText = "Add Note";
         note = new Note();
-        notes = await http.GetFromJsonAsync<Note[]>("api/note");
+        totalPages = await http.GetFromJsonAsync<int>("api/note/totalPages");
+        notes = await GetPage(Page);
+    }
+
+    protected async Task<Note[]> GetPage(int page)
+    {
+        return notes = await http.GetFromJsonAsync<Note[]>($"api/note/paging/{page}");
     }
 
     async Task GetNote(int Id)
