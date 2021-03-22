@@ -1,12 +1,12 @@
 ﻿@using TakeNoteBlazor.Shared
 <EditForm Model="@note" OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(IsNew))">
     <DataAnnotationsValidator />
-    <div class="form-group ">
+    <div class="form-group small">
         <div>
             <div>
             <label class="col-form-label-sm">Author :</label>
                 <InputText @bind-Value="@note.Author" />
-                <ValidationMessage For="@(() => note.Author)" />
+                <ValidationMessage class="is-invalid" For="@(() => note.Author)" />
             </div>
         </div>
         <div>
@@ -23,10 +23,10 @@
                 <ValidationMessage For="@(() => note.Content)" />
             </div>
         </div>
+        <button type="submit" class="btn-sm btn btn-success">
+            @ButtonText
+        </button>
     </div>
-    <button type="submit" class="btn btn-success">
-        @ButtonText
-    </button>
 </EditForm>
 
 
