@@ -1,4 +1,5 @@
-﻿using TakeNoteBlazor.Server.Data;
+﻿
+using TakeNoteBlazor.Server.Data;
 using TakeNoteBlazor.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,16 +7,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TakeNoteBlazor.Server;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace TakeNoteBlazor.Client.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class NoteController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly TakeNoteContext _context;
         private int pageLength { get; set; }
-        public NoteController(ApplicationDbContext context)
+        public NoteController(TakeNoteContext context)
         {
             _context = context;
             pageLength = 8;
@@ -53,13 +58,16 @@ namespace TakeNoteBlazor.Client.Controllers
         [HttpGet("paging/{page}")]
         public async Task<IActionResult> GetPage(int page)
         {
-            var notes = await _context.Notes.Skip(pageLength * (page-1)).Take(pageLength).ToListAsync();
+            var notes = await _context.Notes.Skip(pageLength * (page-1))
+                                            .Take(pageLength)
+                                            .ToListAsync();
             return Ok(notes);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post (Note note)
         {
+            note.AuthorId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             _context.Add(note);
             await _context.SaveChangesAsync();
             return Ok(note.Id);

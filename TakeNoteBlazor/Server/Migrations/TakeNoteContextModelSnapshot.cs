@@ -8,15 +8,15 @@ using TakeNoteBlazor.Server.Data;
 
 namespace TakeNoteBlazor.Server.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(TakeNoteContext))]
+    partial class TakeNoteContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
+                .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -257,7 +257,7 @@ namespace TakeNoteBlazor.Server.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("TakeNoteBlazor.Server.Models.ApplicationUser", b =>
+            modelBuilder.Entity("TakeNoteBlazor.Server.Models.TakeNoteUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -330,20 +330,24 @@ namespace TakeNoteBlazor.Server.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Author")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TakeNoteUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TakeNoteUserId");
 
                     b.ToTable("Notes");
                 });
@@ -359,7 +363,7 @@ namespace TakeNoteBlazor.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("TakeNoteBlazor.Server.Models.ApplicationUser", null)
+                    b.HasOne("TakeNoteBlazor.Server.Models.TakeNoteUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -368,7 +372,7 @@ namespace TakeNoteBlazor.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("TakeNoteBlazor.Server.Models.ApplicationUser", null)
+                    b.HasOne("TakeNoteBlazor.Server.Models.TakeNoteUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -383,7 +387,7 @@ namespace TakeNoteBlazor.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TakeNoteBlazor.Server.Models.ApplicationUser", null)
+                    b.HasOne("TakeNoteBlazor.Server.Models.TakeNoteUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -392,11 +396,23 @@ namespace TakeNoteBlazor.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("TakeNoteBlazor.Server.Models.ApplicationUser", null)
+                    b.HasOne("TakeNoteBlazor.Server.Models.TakeNoteUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Shared.Note", b =>
+                {
+                    b.HasOne("TakeNoteBlazor.Server.Models.TakeNoteUser", null)
+                        .WithMany("Notes")
+                        .HasForeignKey("TakeNoteUserId");
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Server.Models.TakeNoteUser", b =>
+                {
+                    b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618
         }

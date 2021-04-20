@@ -11,9 +11,9 @@ using TakeNoteBlazor.Server.Models;
 
 namespace TakeNoteBlazor.Server.Data
 {
-        public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+        public class TakeNoteContext : ApiAuthorizationDbContext<TakeNoteUser>
         {
-            public ApplicationDbContext(
+            public TakeNoteContext(
                 DbContextOptions options,
                 IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
             {

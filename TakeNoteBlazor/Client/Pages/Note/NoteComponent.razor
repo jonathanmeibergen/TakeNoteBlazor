@@ -1,0 +1,163 @@
+﻿@page "/notes"
+@using TakeNoteBlazor.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NotesClient NotesClient
+@inject IJSRuntime IJSRuntime
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Notes</h3>
+<AuthorizeView>
+	@if (notes is not null)
+	{
+		<FormComponent ButtonText="@ButtonText" note="@note" FormSubmit="SaveNote" />
+	}
+	@if (notes is null)
+	{
+		<p>Loading</p>
+	}
+	else if (notes.Count() is 0)
+	{
+		<p>No Notes Found</p>
+	}
+	else
+	{
+		<table class="table table-striped small table-sm">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Author</th>
+					<th>Title</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (Note note in notes)
+				{
+					<tr>
+						<td>@note.Id</td>
+						<td>@note.Author</td>
+						<td>@note.Title</td>
+						<td>
+							<a class="btn btn-sm btn-success small" @onclick="@(() => GetNote(note.Id))">Edit</a>
+							<a class="btn btn-sm btn-danger small" @onclick="@(() => Delete(note.Id))">Delete</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<nav aria-label="Page navigation example small">
+			<ul class="pagination">
+				<li class="page-item small"><a class="page-link small" @onclick="(async () => await GetPage(--Page))">Previous</a></li>
+				@for (int i = 1; i <= totalPages; i++)
+				{
+					var pageCounter = i;
+					<li class="page-item small"><a class="page-link small" @onclick="(async () => await GetPage(Page = pageCounter))">@i</a></li>
+				}
+				<li class="page-item small"><a class="page-link small" @onclick="(async () => await GetPage(++Page))">Next</a></li>
+			</ul>
+		</nav>
+	}
+</AuthorizeView>
+@code {
+	private IEnumerable<Note> notes { get; set; }
+	private Note note { get; set; }
+	int totalPages;
+	public int Page { get; set; } = 1;
+
+	string ButtonText { get; set; }
+	EventCallback OnValidSubmitDelegate { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		ButtonText = "Add Note";
+		note = new Note() { Author = user.Identity.Name };
+		try
+		{
+			totalPages = await NotesClient.GetTotalPagesAsync();
+		}
+		catch (AccessTokenNotAvailableException ex)
+		{
+			await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
+			ex.Redirect();
+		}
+		notes = await GetPage(Page);
+	}
+
+	protected async Task<IEnumerable<Note>> GetPage(int page)
+	{
+
+		//if (page <= 1)
+		//{ Page = 1; }
+		//else if (page > totalPages)
+		//{ Page = totalPages; }
+		//else
+		//{ Page = page; }
+
+		if (totalPages % page == totalPages)
+			Page = 1;
+		else
+			Page = page;
+
+		try
+		{
+			notes = await NotesClient.GetNotesAsync($"api/note/paging/{Page}");
+		}
+		catch (AccessTokenNotAvailableException ex)
+		{
+			ex.Redirect();
+		}
+
+		return notes;
+	}
+
+	async Task GetNote(int Id)
+	{
+		ButtonText = "Save Note";
+		//OnValidSubmitDelegate = new EventCallback();
+
+		note = await NotesClient.GetNoteAsync($"{Id}");
+	}
+
+	async Task SaveNote(bool IsNew)
+	{
+		try
+		{
+			if (IsNew)
+			{
+				var noteId = await NotesClient.PostNote(note);
+			}
+			else
+			{
+				await NotesClient.PutNote(note);
+			}
+		}
+		catch (AccessTokenNotAvailableException ex)
+		{
+			ex.Redirect();
+		}
+
+		//uriHelper.NavigateTo("notes");
+		await OnInitializedAsync();
+	}
+
+	async Task Delete(int Id)
+	{
+		var note = notes.First(n => n.Id == Id);
+		if (await IJSRuntime.InvokeAsync<bool>("confirm", $"Are you sure to Delete {note.Title}"))
+		{
+			try 
+			{
+				await NotesClient.DeleteAsync(Id);
+			}
+			catch (AccessTokenNotAvailableException ex)
+			{
+				ex.Redirect();
+			}
+			await OnInitializedAsync();
+		}
+	}
+}

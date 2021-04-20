@@ -9,9 +9,9 @@ namespace TakeNoteBlazor.Server.Services
 {
     public class NoteService : INoteService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly TakeNoteContext _dbContext;
 
-        public NoteService(ApplicationDbContext dbContext)
+        public NoteService(TakeNoteContext dbContext)
         {
             _dbContext = dbContext;
         }

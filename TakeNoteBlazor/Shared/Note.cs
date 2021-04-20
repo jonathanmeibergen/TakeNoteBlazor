@@ -8,13 +8,11 @@ namespace TakeNoteBlazor.Shared
     public class Note
     {
         public int Id { get; set; }
-        [Required]
-        [StringLength(64, ErrorMessage = "Title is too long.")]
         public string Title { get; set; }
         [Required]
         public string Content { get; set; }
-        [Required]
-        [StringLength(32, ErrorMessage = "Name is too long.")]
-        public string  Author { get; set; }
-    }
+        public string AuthorId { get; set; }
+		public string Author { get; set; }
+
+	}
 }

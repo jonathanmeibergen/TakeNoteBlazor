@@ -1,0 +1,39 @@
+﻿@page "/question"
+<div class="container">
+	@if (MakeQuestion)
+	{
+
+		@*<EditForm OnValidSubmit="">
+
+		</EditForm>*@
+	}
+	else
+	{
+	<div class="card">
+		@*<div class="card-header"></div>*@
+		<div class="card-body">
+			<div class="card-title">Question</div>
+			<div class="card-text">What is the definition of x?</div>
+		</div>
+		@*<div class="card-footer"></div>*@
+	</div>
+	<br />
+	<div class="card text-dark bg-light">
+		@*<div class="card-header"></div>*@
+		<div class="card-body container">
+			<div class="row">
+				<div class="col-sm">A</div>
+				<div class="col-sm">B</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">C</div>
+				<div class="col-sm">D</div>
+			</div>
+		</div>
+		@*<div class="card-footer"></div>*@
+	</div>
+	}
+</div>
+@code {
+	[Parameter] public bool MakeQuestion { get; set; }
+}

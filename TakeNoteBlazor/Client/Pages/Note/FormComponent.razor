@@ -1,12 +1,13 @@
 ﻿@using TakeNoteBlazor.Shared
-<EditForm Model="@note" OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(IsNew))">
+<EditForm Model="@note" 
+          OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(IsNew))"
+          OnInvalidSubmit="InvalidCommitHandler">
     <DataAnnotationsValidator />
     <div class="form-group small">
         <div>
             <div>
             <label class="col-form-label-sm">Author :</label>
-                <InputText @bind-Value="@note.Author" />
-                <ValidationMessage class="is-invalid" For="@(() => note.Author)" />
+                <span class="form-text">@note.Author</span>
             </div>
         </div>
         <div>
@@ -31,16 +32,22 @@
 
 
 @code {
-    [Parameter] public Note note { get; set; }
-    [Parameter] public string ButtonText { get; set; }
-    public bool IsNew { get; set; }
-    [Parameter] public EventCallback<bool> FormSubmit { get; set; }
-    //[CascadingParameter]
-    //public Object _Parent { get; set; }
-    protected override Task OnParametersSetAsync()
-    {
-        IsNew = note.Id.Equals(0) ? true : false;
-        return base.OnParametersSetAsync();
-    }
+	[Parameter] public Note note { get; set; }
+	[Parameter] public string ButtonText { get; set; }
+	public bool IsNew { get; set; }
+	[Parameter] public EventCallback<bool> FormSubmit { get; set; }
+	//[CascadingParameter]
+	//public Object _Parent { get; set; }
+
+	private void InvalidCommitHandler()
+	{
+		Console.WriteLine("invalid commit of post");
+	}
+
+	protected override Task OnParametersSetAsync()
+	{
+		IsNew = note.Id.Equals(0) ? true : false;
+		return base.OnParametersSetAsync();
+	}
 
 }
