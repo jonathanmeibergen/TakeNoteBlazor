@@ -29,7 +29,9 @@ namespace TakeNoteBlazor.Client.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var notes = await _context.Notes.ToListAsync();
+            var notes = await _context.Notes
+                                      .OrderByDescending(n => n.Id)
+                                      .ToListAsync();
             return Ok(notes);
         }
 
@@ -58,7 +60,8 @@ namespace TakeNoteBlazor.Client.Controllers
         [HttpGet("paging/{page}")]
         public async Task<IActionResult> GetPage(int page)
         {
-            var notes = await _context.Notes.Skip(pageLength * (page-1))
+            var notes = await _context.Notes.OrderByDescending(n => n.Id)
+                                            .Skip(pageLength * (page-1))
                                             .Take(pageLength)
                                             .ToListAsync();
             return Ok(notes);

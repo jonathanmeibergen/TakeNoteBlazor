@@ -1,4 +1,5 @@
-﻿@page "/notes"
+﻿@page "/"
+@page "/notes"
 @using TakeNoteBlazor.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -26,7 +27,6 @@
 		<table class="table table-striped small table-sm">
 			<thead>
 				<tr>
-					<th>Id</th>
 					<th>Author</th>
 					<th>Title</th>
 				</tr>
@@ -35,7 +35,6 @@
 				@foreach (Note note in notes)
 				{
 					<tr>
-						<td>@note.Id</td>
 						<td>@note.Author</td>
 						<td>@note.Title</td>
 						<td>
@@ -46,27 +45,15 @@
 				}
 			</tbody>
 		</table>
-		<nav aria-label="Page navigation example small">
-			<ul class="pagination">
-				<li class="page-item small"><a class="page-link small" @onclick="(async () => await GetPage(--Page))">Previous</a></li>
-				@for (int i = 1; i <= totalPages; i++)
-				{
-					var pageCounter = i;
-					<li class="page-item small"><a class="page-link small" @onclick="(async () => await GetPage(Page = pageCounter))">@i</a></li>
-				}
-				<li class="page-item small"><a class="page-link small" @onclick="(async () => await GetPage(++Page))">Next</a></li>
-			</ul>
-		</nav>
+		<PagingComponent TotalPages="totalPages" GetPage="GetPage"></PagingComponent>
 	}
 </AuthorizeView>
 @code {
 	private IEnumerable<Note> notes { get; set; }
 	private Note note { get; set; }
-	int totalPages;
-	public int Page { get; set; } = 1;
+	private int totalPages;
 
 	string ButtonText { get; set; }
-	EventCallback OnValidSubmitDelegate { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -81,30 +68,18 @@
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
-			await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
+			//await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
 			ex.Redirect();
 		}
-		notes = await GetPage(Page);
+		notes = await GetPage(1);
 	}
 
 	protected async Task<IEnumerable<Note>> GetPage(int page)
 	{
 
-		//if (page <= 1)
-		//{ Page = 1; }
-		//else if (page > totalPages)
-		//{ Page = totalPages; }
-		//else
-		//{ Page = page; }
-
-		if (totalPages % page == totalPages)
-			Page = 1;
-		else
-			Page = page;
-
 		try
 		{
-			notes = await NotesClient.GetNotesAsync($"api/note/paging/{Page}");
+			notes = await NotesClient.GetNotesAsync($"api/note/paging/{page}");
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
@@ -149,7 +124,7 @@
 		var note = notes.First(n => n.Id == Id);
 		if (await IJSRuntime.InvokeAsync<bool>("confirm", $"Are you sure to Delete {note.Title}"))
 		{
-			try 
+			try
 			{
 				await NotesClient.DeleteAsync(Id);
 			}

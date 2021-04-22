@@ -1,33 +1,33 @@
 ﻿@using TakeNoteBlazor.Shared
-<EditForm Model="@note" 
-          OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(IsNew))"
-          OnInvalidSubmit="InvalidCommitHandler">
-    <DataAnnotationsValidator />
-    <div class="form-group small">
-        <div>
-            <div>
-            <label class="col-form-label-sm">Author :</label>
-                <span class="form-text">@note.Author</span>
-            </div>
-        </div>
-        <div>
-            <div>
-            <label class="col-form-label-sm">Title :</label>
-                <InputText @bind-Value="@note.Title" />
-                <ValidationMessage For="@(() => note.Title)" />
-            </div>
-        </div>
-        <div>
-            <div>
-            <label class="col-form-label-sm">Content :</label>
-                <InputTextArea @bind-Value="@note.Content" />
-                <ValidationMessage For="@(() => note.Content)" />
-            </div>
-        </div>
-        <button type="submit" class="btn-sm btn btn-success">
-            @ButtonText
-        </button>
-    </div>
+<EditForm Model="@note"
+		  OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(IsNew))"
+		  OnInvalidSubmit="InvalidCommitHandler">
+	<DataAnnotationsValidator />
+	<div class="form-group small">
+		<div>
+			<div>
+				<label class="col-form-label-sm">Author :</label>
+				<span class="form-text">@note.Author</span>
+			</div>
+		</div>
+		<div>
+			<div>
+				<label class="col-form-label-sm">Title :</label>
+				<InputText @bind-Value="@note.Title" />
+				<ValidationMessage For="@(() => note.Title)" />
+			</div>
+		</div>
+		<div>
+			<div>
+				<label class="col-form-label-sm">Content :</label>
+				<InputTextArea @bind-Value="@note.Content" Rows="4" Cols="25"/>
+				<ValidationMessage For="@(() => note.Content)" />
+			</div>
+		</div>
+		<button type="submit" class="btn-sm btn btn-success">
+			@ButtonText
+		</button>
+	</div>
 </EditForm>
 
 
