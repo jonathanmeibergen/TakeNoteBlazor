@@ -24,7 +24,8 @@ namespace TakeNoteBlazor.Server.Hubs
 			var userId = Context.UserIdentifier;
 			var takeNoteUser = await _userManager.FindByIdAsync(userId);
 			string userName = takeNoteUser.UserName;
-			await Clients.All.ReceiveMessage($"{userName}: {answer}");
+			QuestionParticipant qp = new QuestionParticipant() { UserName = userName, Answer = answer };
+			await Clients.All.ReceiveMessage(qp);
 		}
 	}
 }

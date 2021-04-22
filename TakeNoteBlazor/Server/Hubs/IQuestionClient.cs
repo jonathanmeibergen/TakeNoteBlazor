@@ -8,6 +8,6 @@ namespace TakeNoteBlazor.Server.Hubs
 		Task PresentQuestion(int questionId);
 		Task HideQuestion(int questionId);
 		Task ShowAnswer(int questionId);
-		Task ReceiveMessage(string message);
+		Task ReceiveMessage(QuestionParticipant questionParticipant);
 	}
 }

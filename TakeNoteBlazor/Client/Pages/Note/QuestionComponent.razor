@@ -40,25 +40,26 @@
 				</div>
 			</div>
 			@*<div class="card-footer"></div>*@
+			<button @onclick="SendAnswer" disabled="@(!IsConnected)">Send</button>
 		</div>
-		<button @onclick="SendAnswer" disabled="@(!IsConnected)">Send</button>
 	}
 	@*@if (messages != default)*@
 	@*{*@
 	<div class="text-dark">
-		@foreach (var message in messages)
+		@foreach (var questionParticipant in questionParticipants)
 		{
-			<p>@message</p>
+			<div class="alert alert-info" role="alert">@questionParticipant.UserName : @questionParticipant.Answer</div>
 		}
 	</div>
 	@*}*@
 </div>
 @code {
 	private HubConnection hubConnection;
+
 	private string answerOpen = default;
 	private char answerChar = default;
 	private char correctAnswer = default;
-	private List<string> messages = new List<string>();
+	private List<QuestionParticipant> questionParticipants = new List<QuestionParticipant>();
 
 	[Inject]
 	public NavigationManager NavigationManager { get; set; }
@@ -109,11 +110,12 @@
 		})
 		.Build();
 
-		hubConnection.On<string>("ReceiveMessage", (message) =>
+		hubConnection.On<QuestionParticipant>("ReceiveMessage", (message) =>
 		{
-			messages.Add(message);
-			var hello = "";
-			Console.WriteLine(hello);
+			var questionParticipant = questionParticipants.Where(qp => qp.UserName.Equals(message.UserName)).FirstOrDefault();
+			if (questionParticipant != null)
+				questionParticipants.Remove(questionParticipant);
+			questionParticipants.Add(message);
 			StateHasChanged();
 		});
 
