@@ -25,7 +25,7 @@ namespace TakeNoteBlazor.Client
 
             builder.Services.AddScoped(sp => http);
 
-            builder.Services.AddHttpClient<NotesClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+            builder.Services.AddHttpClient<TakeNoteClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             // Supply HttpClient instances that include access tokens when making requests to the server project

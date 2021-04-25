@@ -5,9 +5,9 @@ namespace TakeNoteBlazor.Server.Hubs
 {
 	public interface IQuestionClient
 	{
-		Task PresentQuestion(int questionId);
-		Task HideQuestion(int questionId);
-		Task ShowAnswer(int questionId);
-		Task ReceiveMessage(QuestionParticipant questionParticipant);
+		public Task PresentQuestion(Question question);
+		public Task HideQuestion(int questionId);
+		public Task ShowAnswer(int questionId);
+		public Task ReceiveMessage(QuestionParticipant questionParticipant);
 	}
 }

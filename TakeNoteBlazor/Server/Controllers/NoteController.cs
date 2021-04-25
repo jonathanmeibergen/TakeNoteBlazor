@@ -36,18 +36,11 @@ namespace TakeNoteBlazor.Client.Controllers
         }
 
         [HttpGet("total")]
-        public async Task<IActionResult> GetTotalAmount()
-        {
-            var total = await _context.Notes.CountAsync();
-            return Ok(total);
-        }
-
-        [HttpGet("totalpages")]
-        public async Task<IActionResult> GetTotalPages()
+        public async Task<IActionResult> GetTotal()
         {
             int total = await _context.Notes.CountAsync();
-            int totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(total)/Convert.ToDecimal(pageLength)));
-            return Ok(totalPages);
+            //int totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(total)/Convert.ToDecimal(pageLength)));
+            return Ok(total);
         }
 
         [HttpGet("{id}")]

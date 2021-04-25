@@ -12,7 +12,16 @@
 
 @code {
 	private int Page { get; set; }
-	[Parameter] public int TotalPages { get; set; }
+	[Parameter] public int Total { get; set; }
+	[Parameter] public int PageLength { get; set; }
+	private int TotalPages;
+
+	protected override Task OnInitializedAsync()
+	{
+		TotalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(Total) / Convert.ToDecimal(PageLength)));
+		return base.OnInitializedAsync();
+	}
+
 	private async void SetPageNumber(int page)
 	{
 		if (page <= 1)

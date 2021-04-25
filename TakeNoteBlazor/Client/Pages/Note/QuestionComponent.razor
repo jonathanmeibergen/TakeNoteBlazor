@@ -91,23 +91,24 @@
 
 	public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
 
-	async Task SendOpenAnswer() => await hubConnection.SendAsync("sendAnswer", answerOpen);
+	async Task SendOpenAnswer() => await hubConnection.SendAsync("SendAnswer", answerOpen);
 	async Task SendAnswer() => await hubConnection.SendAsync("SendAnswer", question.GetAnswer(answerChar));
+	async Task PresentAnswer() => await hubConnection.SendAsync("PresentQuestion", question);
 
 	protected override async Task OnInitializedAsync()
 	{
 		//answerChar = 'b';
 
-		hubConnection = new HubConnectionBuilder()
-		.WithUrl(NavigationManager.ToAbsoluteUri("/questionhub"), options =>
-		{
-			options.AccessTokenProvider = async () =>
+		hubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/questionhub"), 
+			options =>
 			{
-				var accessTokenResult = await AccessTokenProvider.RequestAccessToken();
-				accessTokenResult.TryGetToken(out var accessToken);
-				return accessToken.Value;
-			};
-		})
+				options.AccessTokenProvider = async () =>
+				{
+					var accessTokenResult = await AccessTokenProvider.RequestAccessToken();
+					accessTokenResult.TryGetToken(out var accessToken);
+					return accessToken.Value;
+				};
+			})
 		.Build();
 
 		hubConnection.On<QuestionParticipant>("ReceiveMessage", (message) =>
@@ -118,6 +119,8 @@
 			questionParticipants.Add(message);
 			StateHasChanged();
 		});
+
+		//hubConnection.On<int>("PresentQuestion",)
 
 		await hubConnection.StartAsync();
 	}

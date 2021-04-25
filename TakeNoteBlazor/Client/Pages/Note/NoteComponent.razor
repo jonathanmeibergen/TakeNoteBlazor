@@ -3,7 +3,7 @@
 @using TakeNoteBlazor.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NotesClient NotesClient
+@inject TakeNoteClient TakeNoteClient
 @inject IJSRuntime IJSRuntime
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -45,13 +45,13 @@
 				}
 			</tbody>
 		</table>
-		<PagingComponent TotalPages="totalPages" GetPage="GetPage"></PagingComponent>
+		<PagingComponent Total="total" PageLength="8" GetPage="GetPage"></PagingComponent>
 	}
 </AuthorizeView>
 @code {
 	private IEnumerable<Note> notes { get; set; }
 	private Note note { get; set; }
-	private int totalPages;
+	private int total;
 
 	string ButtonText { get; set; }
 
@@ -64,7 +64,7 @@
 		note = new Note() { Author = user.Identity.Name };
 		try
 		{
-			totalPages = await NotesClient.GetTotalPagesAsync();
+			total = await TakeNoteClient.GetTotalAsync<Note>();
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
@@ -79,7 +79,7 @@
 
 		try
 		{
-			notes = await NotesClient.GetNotesAsync($"api/note/paging/{page}");
+			notes = await TakeNoteClient.GetAllAsync<Note>($"api/note/paging/{page}");
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
@@ -94,7 +94,7 @@
 		ButtonText = "Save Note";
 		//OnValidSubmitDelegate = new EventCallback();
 
-		note = await NotesClient.GetNoteAsync($"{Id}");
+		note = await TakeNoteClient.GetAsync<Note>($"{Id}");
 	}
 
 	async Task SaveNote(bool IsNew)
@@ -103,11 +103,11 @@
 		{
 			if (IsNew)
 			{
-				var noteId = await NotesClient.PostNote(note);
+				var noteId = await TakeNoteClient.PostAsync<Note>(note);
 			}
 			else
 			{
-				await NotesClient.PutNote(note);
+				await TakeNoteClient.PutAsync<Note>(note);
 			}
 		}
 		catch (AccessTokenNotAvailableException ex)
@@ -126,7 +126,7 @@
 		{
 			try
 			{
-				await NotesClient.DeleteAsync(Id);
+				await TakeNoteClient.DeleteAsync<Note>(Id);
 			}
 			catch (AccessTokenNotAvailableException ex)
 			{

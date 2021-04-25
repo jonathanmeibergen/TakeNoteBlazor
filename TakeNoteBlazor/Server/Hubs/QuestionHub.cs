@@ -21,11 +21,23 @@ namespace TakeNoteBlazor.Server.Hubs
 		}
 		public async Task SendAnswer (string answer)
 		{
-			var userId = Context.UserIdentifier;
-			var takeNoteUser = await _userManager.FindByIdAsync(userId);
-			string userName = takeNoteUser.UserName;
+			string userName = GetUser().Result.UserName;
 			QuestionParticipant qp = new QuestionParticipant() { UserName = userName, Answer = answer };
 			await Clients.All.ReceiveMessage(qp);
+		}
+
+		public async Task PresentQuestion (Question question)
+		{
+			string userName = GetUser().Result.UserName;
+			string groupId = String.Concat(userName, question.Id);
+			//Clients.
+			//Groups.AddToGroupAsync(Context.ConnectionId,)
+		}
+
+		private async Task<TakeNoteUser> GetUser()
+		{
+			var userId = Context.UserIdentifier;
+			return await _userManager.FindByIdAsync(userId);
 		}
 	}
 }
