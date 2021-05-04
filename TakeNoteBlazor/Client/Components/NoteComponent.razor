@@ -1,6 +1,7 @@
 ﻿@page "/"
 @page "/notes"
 @using TakeNoteBlazor.Shared
+@using TakeNoteBlazor.Client.ViewModels
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject TakeNoteClient TakeNoteClient
@@ -10,10 +11,6 @@
 
 <h3>Notes</h3>
 <AuthorizeView>
-	@if (notes is not null)
-	{
-		<FormComponent ButtonText="@ButtonText" note="@note" FormSubmit="SaveNote" />
-	}
 	@if (notes is null)
 	{
 		<p>Loading</p>
@@ -22,8 +19,10 @@
 	{
 		<p>No Notes Found</p>
 	}
-	else
+	else if (notes is not null)
 	{
+		<FormComponent ButtonText="@ButtonText" viewModel="@viewModel" FormSubmit="SaveNote" />
+
 		<table class="table table-striped small table-sm">
 			<thead>
 				<tr>
@@ -50,7 +49,7 @@
 </AuthorizeView>
 @code {
 	private IEnumerable<Note> notes { get; set; }
-	private Note note { get; set; }
+	private FormViewModel viewModel { get; set; }
 	private int total;
 
 	string ButtonText { get; set; }
@@ -61,14 +60,15 @@
 		var user = authState.User;
 
 		ButtonText = "Add Note";
-		note = new Note() { Author = user.Identity.Name };
+		viewModel = new FormViewModel() { IsNew = true };
+		viewModel.Note = new Note() { Author = user.Identity.Name };
 		try
 		{
 			total = await TakeNoteClient.GetTotalAsync<Note>();
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
-			//await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
+			await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
 			ex.Redirect();
 		}
 		notes = await GetPage(1);
@@ -83,6 +83,7 @@
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
+			await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
 			ex.Redirect();
 		}
 
@@ -94,7 +95,7 @@
 		ButtonText = "Save Note";
 		//OnValidSubmitDelegate = new EventCallback();
 
-		note = await TakeNoteClient.GetAsync<Note>($"{Id}");
+		viewModel.Note = await TakeNoteClient.GetAsync<Note>($"{Id}");
 	}
 
 	async Task SaveNote(bool IsNew)
@@ -103,15 +104,16 @@
 		{
 			if (IsNew)
 			{
-				var noteId = await TakeNoteClient.PostAsync<Note>(note);
+				var noteId = await TakeNoteClient.PostAsync<Note>(viewModel.Note);
 			}
 			else
 			{
-				await TakeNoteClient.PutAsync<Note>(note);
+				await TakeNoteClient.PutAsync<Note>(viewModel.Note);
 			}
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
+			await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
 			ex.Redirect();
 		}
 
@@ -130,6 +132,7 @@
 			}
 			catch (AccessTokenNotAvailableException ex)
 			{
+				await IJSRuntime.InvokeAsync<bool>("confirm", $"{ex.Message}");
 				ex.Redirect();
 			}
 			await OnInitializedAsync();

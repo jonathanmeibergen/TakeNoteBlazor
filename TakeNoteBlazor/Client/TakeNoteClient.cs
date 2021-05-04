@@ -24,7 +24,7 @@ namespace TakeNoteBlazor.Client
 
 		public async Task<int> GetTotalAsync<T>()
 		{
-			return	await httpClient.GetFromJsonAsync<int>($"api/{typeof(T).Name.ToLower()}/total");
+			return await httpClient.GetFromJsonAsync<int>($"api/{typeof(T).Name.ToLower()}/total");
 		}
 
 		public async Task<int> PostAsync<T> (T item)
@@ -41,10 +41,7 @@ namespace TakeNoteBlazor.Client
 			response.EnsureSuccessStatusCode();
 		}
 
-		public async Task DeleteAsync<T>(int id)
-		{
-			var response = await httpClient.DeleteAsync($"api/{typeof(T).Name.ToLower()}/{id}");
-		}
-
+		public async Task DeleteAsync<T>(int id) =>
+			await httpClient.DeleteAsync($"api/{typeof(T).Name.ToLower()}/{id}");
 	}
 }
