@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace TakeNoteBlazor.Shared
 {
-	public class Card : IEntity
+	public interface IEntity
 	{
 		public int Id { get; set; }
-		public string Front { get; set; }
-		public string Back { get; set; }
 	}
 }

@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TakeNoteBlazor.Shared;
 
 namespace TakeNoteBlazor.Server.Models
 {
 	public class QuizService
 	{
+		List<Quiz> Quizzes { get; set; }
 		public QuizService()
 		{
-			QuizMasters = new List<QuizMaster>();
+			Quizzes = new List<Quiz>();
 		}
-		List<QuizMaster> QuizMasters { get; set; }
 	}
 }

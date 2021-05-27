@@ -11,6 +11,8 @@ using System.Linq;
 using TakeNoteBlazor.Server.Data;
 using TakeNoteBlazor.Server.Hubs;
 using TakeNoteBlazor.Server.Models;
+using TakeNoteBlazor.Server.Repositories;
+using TakeNoteBlazor.Shared;
 
 namespace TakeNoteBlazor.Server
 {
@@ -45,6 +47,10 @@ namespace TakeNoteBlazor.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddScoped<IRepository<Note>, Repository<Note>>();
+            services.AddScoped<IRepository<Question>, Repository<Question>>();
+            services.AddScoped<IRepository<Card>, Repository<Card>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TakeNoteBlazor.Shared
 {
-    public class Note
+    public class Note : IEntity
     {
         public int Id { get; set; }
         public string Title { get; set; }

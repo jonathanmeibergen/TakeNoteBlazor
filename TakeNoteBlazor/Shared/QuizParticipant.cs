@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace TakeNoteBlazor.Shared {
-	public class QuizParticipant
+	public class QuizParticipant : IEntity
 	{
 		public int Id { get; set; }
 		public string UserName { get; set; }

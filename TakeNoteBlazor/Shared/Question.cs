@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TakeNoteBlazor.Shared
 {
-	public class Question
+	public class Question : IEntity
 	{
 		public int Id { get; set; }
 		public string Title { get; set; }
