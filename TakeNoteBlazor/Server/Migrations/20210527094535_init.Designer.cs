@@ -10,7 +10,7 @@ using TakeNoteBlazor.Server.Data;
 namespace TakeNoteBlazor.Server.Migrations
 {
     [DbContext(typeof(TakeNoteContext))]
-    [Migration("20210414133917_init")]
+    [Migration("20210527094535_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -259,6 +259,21 @@ namespace TakeNoteBlazor.Server.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("QuestionQuiz", b =>
+                {
+                    b.Property<int>("QuestionsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuizzesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("QuestionsId", "QuizzesId");
+
+                    b.HasIndex("QuizzesId");
+
+                    b.ToTable("QuestionQuiz");
+                });
+
             modelBuilder.Entity("TakeNoteBlazor.Server.Models.TakeNoteUser", b =>
                 {
                     b.Property<string>("Id")
@@ -324,6 +339,24 @@ namespace TakeNoteBlazor.Server.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("TakeNoteBlazor.Shared.Card", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Back")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Front")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cards");
+                });
+
             modelBuilder.Entity("TakeNoteBlazor.Shared.Note", b =>
                 {
                     b.Property<int>("Id")
@@ -352,6 +385,77 @@ namespace TakeNoteBlazor.Server.Migrations
                     b.HasIndex("TakeNoteUserId");
 
                     b.ToTable("Notes");
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Shared.Question", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Answer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AnswerA")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AnswerB")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AnswerC")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AnswerChar")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<string>("AnswerD")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Shared.Quiz", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("QuizMasterId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuizMasterId");
+
+                    b.ToTable("Quizzes");
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Shared.QuizParticipant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("QuizId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuizId");
+
+                    b.ToTable("QuizParticipants");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -405,6 +509,21 @@ namespace TakeNoteBlazor.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("QuestionQuiz", b =>
+                {
+                    b.HasOne("TakeNoteBlazor.Shared.Question", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TakeNoteBlazor.Shared.Quiz", null)
+                        .WithMany()
+                        .HasForeignKey("QuizzesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TakeNoteBlazor.Shared.Note", b =>
                 {
                     b.HasOne("TakeNoteBlazor.Server.Models.TakeNoteUser", null)
@@ -412,9 +531,35 @@ namespace TakeNoteBlazor.Server.Migrations
                         .HasForeignKey("TakeNoteUserId");
                 });
 
+            modelBuilder.Entity("TakeNoteBlazor.Shared.Quiz", b =>
+                {
+                    b.HasOne("TakeNoteBlazor.Shared.QuizParticipant", "QuizMaster")
+                        .WithMany("Quizzes")
+                        .HasForeignKey("QuizMasterId");
+
+                    b.Navigation("QuizMaster");
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Shared.QuizParticipant", b =>
+                {
+                    b.HasOne("TakeNoteBlazor.Shared.Quiz", null)
+                        .WithMany("QuizParticipants")
+                        .HasForeignKey("QuizId");
+                });
+
             modelBuilder.Entity("TakeNoteBlazor.Server.Models.TakeNoteUser", b =>
                 {
                     b.Navigation("Notes");
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Shared.Quiz", b =>
+                {
+                    b.Navigation("QuizParticipants");
+                });
+
+            modelBuilder.Entity("TakeNoteBlazor.Shared.QuizParticipant", b =>
+                {
+                    b.Navigation("Quizzes");
                 });
 #pragma warning restore 612, 618
         }

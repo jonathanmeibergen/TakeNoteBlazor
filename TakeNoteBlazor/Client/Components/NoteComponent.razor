@@ -2,9 +2,10 @@
 @page "/notes"
 @using TakeNoteBlazor.Shared
 @using TakeNoteBlazor.Client.ViewModels
+@using TakeNoteBlazor.Client.Components
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject TakeNoteClient TakeNoteClient
+@inject NotesHttpRepository NotesHttpRepository
 @inject IJSRuntime IJSRuntime
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -21,7 +22,7 @@
 	}
 	else if (notes is not null)
 	{
-		<FormComponent ButtonText="@ButtonText" viewModel="@viewModel" FormSubmit="SaveNote" />
+		<FormComponent ButtonText="@ButtonText" ViewModel="@ViewModel" FormSubmit="SaveNote" />
 
 		<table class="table table-striped small table-sm">
 			<thead>
@@ -49,7 +50,7 @@
 </AuthorizeView>
 @code {
 	private IEnumerable<Note> notes { get; set; }
-	private FormViewModel viewModel { get; set; }
+	private FormViewModel ViewModel { get; set; }
 	private int total;
 
 	string ButtonText { get; set; }
@@ -60,11 +61,11 @@
 		var user = authState.User;
 
 		ButtonText = "Add Note";
-		viewModel = new FormViewModel() { IsNew = true };
-		viewModel.Note = new Note() { Author = user.Identity.Name };
+		ViewModel = new FormViewModel() { IsNew = true };
+		ViewModel.Note = new Note() { Author = user.Identity.Name };
 		try
 		{
-			total = await TakeNoteClient.GetTotalAsync<Note>();
+			total = await NotesHttpRepository.GetTotalAsync<Note>();
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
@@ -79,7 +80,7 @@
 
 		try
 		{
-			notes = await TakeNoteClient.GetAllAsync<Note>($"api/note/paging/{page}");
+			notes = await NotesHttpRepository.GetAllAsync<Note>($"api/note/paging/{page}");
 		}
 		catch (AccessTokenNotAvailableException ex)
 		{
@@ -95,7 +96,7 @@
 		ButtonText = "Save Note";
 		//OnValidSubmitDelegate = new EventCallback();
 
-		viewModel.Note = await TakeNoteClient.GetAsync<Note>($"{Id}");
+		ViewModel.Note = await NotesHttpRepository.GetAsync<Note>($"{Id}");
 	}
 
 	async Task SaveNote(bool IsNew)
@@ -104,11 +105,11 @@
 		{
 			if (IsNew)
 			{
-				var noteId = await TakeNoteClient.PostAsync<Note>(viewModel.Note);
+				var noteId = await NotesHttpRepository.PostAsync<Note>(ViewModel.Note);
 			}
 			else
 			{
-				await TakeNoteClient.PutAsync<Note>(viewModel.Note);
+				await NotesHttpRepository.PutAsync<Note>(ViewModel.Note);
 			}
 		}
 		catch (AccessTokenNotAvailableException ex)
@@ -128,7 +129,7 @@
 		{
 			try
 			{
-				await TakeNoteClient.DeleteAsync<Note>(Id);
+				await NotesHttpRepository.DeleteAsync<Note>(Id);
 			}
 			catch (AccessTokenNotAvailableException ex)
 			{

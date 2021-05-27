@@ -1,37 +1,37 @@
 ﻿@using TakeNoteBlazor.Shared
 @using TakeNoteBlazor.Client.ViewModels
-<EditForm Model="@viewModel"
-		  OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(viewModel.IsNew))"
+<EditForm Model="@ViewModel"
+		  OnValidSubmit="@(async () => await FormSubmit.InvokeAsync(ViewModel.IsNew))"
 		  OnInvalidSubmit="InvalidCommitHandler">
 	<DataAnnotationsValidator />
 	<div class="form-group small">
 		<div>
 			<div>
 				<label class="col-form-label-sm">Author :</label>
-				<span class="form-text">@viewModel.Author</span>
+				<span class="form-text">@ViewModel.Author</span>
 			</div>
 		</div>
 		<div>
 			<div>
 				<label class="col-form-label-sm">Title :</label>
-				<InputText @bind-Value="@viewModel.Title" />
-				<ValidationMessage For="@(() => viewModel.Title)" />
+				<InputText @bind-Value="@ViewModel.Title" />
+				<ValidationMessage For="@(() => ViewModel.Title)" />
 			</div>
 		</div>
-		@if (viewModel.Note is not null)
+		@if (ViewModel.Note is not null)
 		{
 		<div>
 			<div>
 				<label class="col-form-label-sm">Content :</label>
-				<InputTextArea @bind-Value="@viewModel.Note.Content" Rows="4" Cols="25"/>
-				<ValidationMessage For="@(() => viewModel.Note.Content)" />
+				<InputTextArea @bind-Value="@ViewModel.Note.Content" Rows="4" Cols="25"/>
+				<ValidationMessage For="@(() => ViewModel.Note.Content)" />
 			</div>
 		</div>
 		}
-		else if (viewModel.Question is not null)
+		else if (ViewModel.Question is not null)
 		{
 		}
-		else if (viewModel.Card is not null)
+		else if (ViewModel.Card is not null)
 		{
 		}
 		<button type="submit" class="btn-sm btn btn-success">
@@ -41,7 +41,7 @@
 </EditForm>
 
 @code {
-	[Parameter] public FormViewModel viewModel { get; set; }
+	[Parameter] public FormViewModel ViewModel { get; set; }
 	[Parameter] public string ButtonText { get; set; }
 	[Parameter] public EventCallback<bool> FormSubmit { get; set; }
 	//[CascadingParameter]

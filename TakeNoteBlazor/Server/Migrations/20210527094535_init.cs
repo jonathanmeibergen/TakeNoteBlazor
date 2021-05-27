@@ -47,6 +47,20 @@ namespace TakeNoteBlazor.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Front = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Back = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cards", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DeviceCodes",
                 columns: table => new
                 {
@@ -83,6 +97,25 @@ namespace TakeNoteBlazor.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersistedGrants", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Questions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnswerA = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnswerB = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnswerC = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnswerD = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnswerChar = table.Column<string>(type: "nvarchar(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Questions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,6 +247,57 @@ namespace TakeNoteBlazor.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "QuestionQuiz",
+                columns: table => new
+                {
+                    QuestionsId = table.Column<int>(type: "int", nullable: false),
+                    QuizzesId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionQuiz", x => new { x.QuestionsId, x.QuizzesId });
+                    table.ForeignKey(
+                        name: "FK_QuestionQuiz_Questions_QuestionsId",
+                        column: x => x.QuestionsId,
+                        principalTable: "Questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Quizzes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    QuizMasterId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Quizzes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuizParticipants",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    QuizId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuizParticipants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuizParticipants_Quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "Quizzes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -283,10 +367,45 @@ namespace TakeNoteBlazor.Server.Migrations
                 name: "IX_PersistedGrants_SubjectId_SessionId_Type",
                 table: "PersistedGrants",
                 columns: new[] { "SubjectId", "SessionId", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuestionQuiz_QuizzesId",
+                table: "QuestionQuiz",
+                column: "QuizzesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizParticipants_QuizId",
+                table: "QuizParticipants",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Quizzes_QuizMasterId",
+                table: "Quizzes",
+                column: "QuizMasterId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_QuestionQuiz_Quizzes_QuizzesId",
+                table: "QuestionQuiz",
+                column: "QuizzesId",
+                principalTable: "Quizzes",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Quizzes_QuizParticipants_QuizMasterId",
+                table: "Quizzes",
+                column: "QuizMasterId",
+                principalTable: "QuizParticipants",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_QuizParticipants_Quizzes_QuizId",
+                table: "QuizParticipants");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -303,6 +422,9 @@ namespace TakeNoteBlazor.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Cards");
+
+            migrationBuilder.DropTable(
                 name: "DeviceCodes");
 
             migrationBuilder.DropTable(
@@ -312,10 +434,22 @@ namespace TakeNoteBlazor.Server.Migrations
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
+                name: "QuestionQuiz");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "Quizzes");
+
+            migrationBuilder.DropTable(
+                name: "QuizParticipants");
         }
     }
 }

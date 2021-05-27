@@ -16,6 +16,7 @@ namespace TakeNoteBlazor.Shared
 		public string AnswerC { get; set; }
 		public string AnswerD { get; set; }
 		public char AnswerChar { get; set; }
+		public List<Quiz> Quizzes { get; set; }
 
 		public string GetAnswer(char answer)
 		{

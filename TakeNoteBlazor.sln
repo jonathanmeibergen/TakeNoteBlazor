@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeNoteBlazor.Client", "Ta
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeNoteBlazor.Shared", "TakeNoteBlazor\Shared\TakeNoteBlazor.Shared.csproj", "{0382328D-6F12-4F9D-9D8A-45B9FC0F82CB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeNoteUnitTests", "TakeNoteUnitTests\TakeNoteUnitTests.csproj", "{4E60FC89-8273-468A-9927-3B0CF418CF25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0382328D-6F12-4F9D-9D8A-45B9FC0F82CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0382328D-6F12-4F9D-9D8A-45B9FC0F82CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0382328D-6F12-4F9D-9D8A-45B9FC0F82CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E60FC89-8273-468A-9927-3B0CF418CF25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E60FC89-8273-468A-9927-3B0CF418CF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E60FC89-8273-468A-9927-3B0CF418CF25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E60FC89-8273-468A-9927-3B0CF418CF25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

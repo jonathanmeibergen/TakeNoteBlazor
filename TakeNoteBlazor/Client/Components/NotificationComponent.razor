@@ -1,0 +1,13 @@
+﻿@using TakeNoteBlazor.Shared
+@using System.Globalization;
+
+@if (Notification is not null)
+{
+	<div class="alert alert-info" role="alert">
+		<span class="small">@Notification.Time.ToString("g", CultureInfo.CreateSpecificCulture("nl-NL"))</span> : @Notification.Message;
+	</div>
+}
+
+@code {
+	[Parameter] public Notification Notification { get; set; }
+}

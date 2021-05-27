@@ -6,6 +6,7 @@
 
 @implements IDisposable
 <div class="container">
+	<NotificationComponent Notification="_notification"/>
 	<div class="card">
 		@*<div class="card-header"></div>*@
 		<div class="card-body">
@@ -46,20 +47,28 @@
 	@*@if (messages != default)*@
 	@*{*@
 	<div class="text-dark">
-		@foreach (var questionParticipant in questionParticipants)
+		@foreach (var answer in _answers)
 		{
-			<div class="alert alert-info" role="alert">@questionParticipant.UserName : @questionParticipant.Answer</div>
+			<div class="alert alert-info" role="alert">@answer.UserName : @answer.Text</div>
 		}
 	</div>
 	@*}*@
 </div>
 @code {
 	private HubConnection hubConnection;
+	private Notification _notification;
 
 	private string answerOpen = default;
 	private char answerChar = default;
 	private char correctAnswer = default;
-	private List<QuestionParticipant> questionParticipants = new List<QuestionParticipant>();
+
+	private class Answer
+	{
+		public string Text { get; set; }
+		public string UserName { get; set; }
+	}
+
+	private List<Answer> _answers = new List<Answer>();
 
 	[Inject]
 	public NavigationManager NavigationManager { get; set; }
@@ -99,7 +108,7 @@
 	{
 		//answerChar = 'b';
 
-		hubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/questionhub"), 
+		hubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/questionhub"),
 			options =>
 			{
 				options.AccessTokenProvider = async () =>
@@ -111,14 +120,17 @@
 			})
 		.Build();
 
-		hubConnection.On<QuestionParticipant>("ReceiveMessage", (message) =>
+		hubConnection.On<QuizDTO>("ReceiveMessage", (quizDTO) =>
 		{
-			var questionParticipant = questionParticipants.Where(qp => qp.UserName.Equals(message.UserName)).FirstOrDefault();
-			if (questionParticipant != null)
-				questionParticipants.Remove(questionParticipant);
-			questionParticipants.Add(message);
+			var answer = _answers.Where(qp => qp.UserName.Equals(quizDTO.UserName)).FirstOrDefault();
+			if (answer != null)
+				_answers.Remove(answer);
+			_answers.Add(new Answer { Text = quizDTO.Answer, UserName = quizDTO.UserName });
 			StateHasChanged();
 		});
+
+		hubConnection.On<Notification>("ReceiveNotification", (notification) =>
+		{ _notification = notification; });
 
 		//hubConnection.On<int>("PresentQuestion",)
 

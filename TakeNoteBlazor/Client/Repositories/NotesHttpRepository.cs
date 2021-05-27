@@ -6,13 +6,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using TakeNoteBlazor.Shared;
 
-namespace TakeNoteBlazor.Client
+namespace TakeNoteBlazor.Client.Repositories
 {
-	public class TakeNoteClient
+	public class NotesHttpRepository
 	{
 		private readonly HttpClient httpClient;
 
-		public TakeNoteClient(HttpClient httpClient)
+		public NotesHttpRepository(HttpClient httpClient)
 		{
 			this.httpClient = httpClient;
 		}

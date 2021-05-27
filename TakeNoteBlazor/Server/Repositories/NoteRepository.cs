@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using TakeNoteBlazor.Server.Data;
 using TakeNoteBlazor.Shared;
 
-namespace TakeNoteBlazor.Server.Services
+namespace TakeNoteBlazor.Server.Repositories
 {
-    public class NoteService : INoteService
+    public class NoteRepository : INoteRepository
     {
         private readonly TakeNoteContext _dbContext;
 
-        public NoteService(TakeNoteContext dbContext)
+        public NoteRepository(TakeNoteContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -21,5 +21,7 @@ namespace TakeNoteBlazor.Server.Data
             public DbSet<Note> Notes { get; set; }
             public DbSet<Question> Questions { get; set; }
             public DbSet<Card> Cards { get; set; }
+            public DbSet<Quiz> Quizzes { get; set; }
+            public DbSet<QuizParticipant> QuizParticipants { get; set; }
         }
 }

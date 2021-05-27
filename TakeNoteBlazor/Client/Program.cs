@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using TakeNoteBlazor.Client.Repositories;
 
 namespace TakeNoteBlazor.Client
 {
@@ -25,7 +22,7 @@ namespace TakeNoteBlazor.Client
 
             builder.Services.AddScoped(sp => http);
 
-            builder.Services.AddHttpClient<TakeNoteClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+            builder.Services.AddHttpClient<NotesHttpRepository>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             // Supply HttpClient instances that include access tokens when making requests to the server project

@@ -1,0 +1,293 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@font-face{
+	font-family: Spartan;
+	src: url(/Spartan/Spartan-VariableFont_wght.ttf);
+}
+@font-face {
+	font-family: "Fira Code";
+	src: url(/Fira_Code/FiraCode-VariableFont_wght.ttf);
+}
+
+$gray: #333;
+$cardBG: #f8f8e8;
+$bg: #ddd;
+$orange: #dd8800;
+$size: 8;
+
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+	color: $gray;
+	font-size: inherit;
+	background: transparent;
+	transition: color 0.3s, background 0.3s;
+	font-family: inherit;
+}
+
+*:focus,
+input[type="radio"]:focus + label {
+	outline: 2px dashed $orange;
+	outline-offset: 2px;
+}
+
+.sr {
+	position: absolute;
+	clip: rect(1px, 1px, 1px, 1px);
+	width: 1px;
+	height: 1px;
+	left: -100vh;
+	opacity: 0;
+}
+
+body {
+	margin: 0;
+	display: grid;
+	place-items: center;
+	min-height: 100vh;
+	font-family: "Spartan";
+	font-size: 18px;
+	box-sizing: border-box;
+	color: #333;
+	background: $bg;
+	text-align: left;
+}
+
+#app {
+	width: 100%;
+	max-width: 26rem;
+	padding: 4rem 1rem;
+	border: 2px solid;
+	box-shadow: 0.5rem 0.5rem 0 rgba(0, 0, 0, 0.25);
+	position: relative;
+	background: $cardBG;
+	margin: 3rem auto 0;
+
+	h1 {
+		font-size: 1.8rem;
+	}
+
+	#swatch-container {
+		#dark-mode-toggle {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: 0.5rem;
+			position: relative;
+			z-index: 2;
+			background: transparent;
+
+			input[type="radio"] {
+				@extend .sr;
+
+				& + label {
+					width: 1.25rem;
+					height: 1.25rem;
+					display: block;
+					border-radius: 1.25rem;
+					border: 2px solid;
+					background: $cardBG;
+					position: relative;
+
+					&[for="dark"] {
+						background: $gray;
+					}
+
+					&:not(:last-child) {
+						margin-right: 0.5rem;
+					}
+				}
+
+				&:checked + label:after {
+					content: "";
+					border-radius: 2rem;
+					width: calc(1.5rem + 4px);
+					height: calc(1.5rem + 4px);
+					border: 2px solid;
+					display: block;
+					background: transparent;
+					left: -6px;
+					top: -6px;
+					position: absolute;
+				}
+			}
+		}
+	}
+
+	#swatch {
+		width: #{$size}rem;
+		height: #{$size}rem;
+		border-radius: #{$size}rem;
+		border: 2px solid;
+		position: absolute;
+		top: #{$size * -0.5}rem;
+		left: calc(50% - #{$size * 0.5}rem);
+		background-color: $cardBG;
+	}
+
+	ul {
+		padding: 0;
+		list-style-type: none;
+
+		li + li {
+			margin-top: 0.5rem;
+		}
+	}
+
+	input,
+	textarea,
+	button {
+		padding: 0.5em;
+		border-radius: 0.25em;
+		border: 2px solid;
+		font-size: 1rem;
+	}
+
+	input,
+	textarea,
+	button {
+		font-family: "Fira Code", monospace;
+	}
+
+	button {
+		padding: 0.5em 1em;
+		font-weight: bold;
+
+		&:disabled {
+			opacity: 0.4;
+		}
+	}
+
+	label,
+	input,
+	textarea,
+	.label {
+		display: block;
+		width: 100%;
+	}
+
+	input,
+	textarea{
+		padding: 0.75em;
+	}
+
+	label,
+	.label {
+		margin: 0.25em 0;
+		font-weight: bold;
+	}
+
+	#result {
+		border: none;
+		border-radius: 0;
+		padding-left: 0;
+		border-bottom: 2px solid;
+	}
+
+	.flex {
+		display: flex;
+		align-items: stretch;
+		flex-wrap: wrap;
+
+		@media (min-width: 440px) {
+			flex-wrap: nowrap;
+
+			& > *:not(:last-child) {
+				margin-right: 1rem;
+			}
+		}
+	}
+
+	.group {
+		margin-top: 3rem;
+		text-align: left;
+	}
+
+	.strong {
+		font-weight: bold;
+	}
+
+	//#app
+	@media (min-width: 440px) {
+		padding: 4rem 3rem;
+	}
+
+	@media (min-width: 768px) {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		grid-gap: 3rem;
+		max-width: 768px;
+		align-items: center;
+		text-align: left;
+		margin: 0 auto;
+
+		#swatch {
+			$size: 12;
+			position: relative;
+			left: unset;
+			top: unset;
+			width: #{$size}rem;
+			height: #{$size}rem;
+			border-radius: #{$size}rem;
+		}
+
+		#app-form {
+			padding: 2rem 0 2rem 3rem;
+			border-left: 2px dashed;
+		}
+	}
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.8s;
+}
+
+.fade-enter,
+.fade-leave-to {
+	opacity: 0;
+	transform: translateY(2rem);
+}
+
+#dark-mode-switch {
+	position: absolute;
+	z-index: 3;
+	width: 3rem;
+	height: 2rem;
+	border: 2px solid;
+	left: 0.5rem;
+	top: 0.5rem;
+	border-radius: 3rem;
+}
+
+main.dark {
+	color: #fff;
+	$gray: #fff;
+	$cardBG: #333;
+	$bg: #222;
+	$orange: #dd8800;
+	background: $bg;
+
+	* {
+		color: $gray;
+	}
+
+	#app {
+		background: $cardBG;
+		box-shadow: 0.5rem 0.5rem 0 rgba(0, 0, 0, 0.7);
+
+		#swatch-container {
+			#dark-mode-toggle {
+				input[type="radio"] {
+					&:checked + label:after {
+						border: 2px solid #fff;
+					}
+				}
+			}
+
+			#swatch {
+				background-color: $cardBG;
+			}
+		}
+	}
+}
